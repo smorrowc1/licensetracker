@@ -1,0 +1,422 @@
+<!-- https://www.youtube.com/watch?v=vrj9AohVhPA&t=3151s -->
+<!-- YT: Nsquared Coding -->
+<!--Node.js, Express & MySQL Tutorial - Build a Simple FullStack App -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wish List Project</title>
+    <!-- <link href="https://getbootstrap.com/docs/5.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"> -->
+    <!-- <link href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" rel="stylesheet"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/client/stylesheet.css">
+
+</head>
+<body>
+
+    <section id="header">
+        <div class="wrapper-nav">
+            <div class="main_content">
+                <div class="nav-menus">
+                    <nav>
+                        <ul class="nav-links">
+                            <li><a href="/" class="active">Home</a></li>
+                            <li><a href="javascript:showSearchRow();">Search</a></li>
+                            <li><a href="/">Log Out</a></li>
+                        </ul>
+                        <button type="button" class="btn nav-btn">
+                            <i class="fa-solid fa-bars"></i>
+                        </button>
+                    </nav>
+                    <div class="main-container">
+                        <div class="main-title">
+                            <h2>License Tracker</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section hidden id="search-row">
+        <div class="wrapper">
+            <div class="jobcareers">
+                <label id="name-lbl" class="sr-only" for="inlineFormInput">Add Record:</label>
+                <input type="text" class="form-control mb-2" id="name-input" name="name-input">
+                <button type="submit" id="add-name-btn" class="btn btn-primary mb-2">Add</button>
+
+                <label class="sr-only" for="inlineFormInputGroup">Search License</label>
+                <input type="text" id="search-input"  class="form-control" id="inlineFormInputGroup" placeholder="search by name">
+                <button type="submit" id="search-btn" class="btn btn-primary mb-2">Search</button>
+            </div>
+        </div>
+    </section>
+
+    <section>  
+    <main>
+        <div class="main-grid">
+            <table id="table">
+                <thead>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </section>
+
+    <section hidden id="update-row">
+        <label>Name</label>
+        <input type="text" id="update-name-input">
+        <button id="update-row-btn">Update</button>
+    </section>
+
+</main>
+
+<script
+  src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+  crossorigin="anonymous"></script>
+<script>
+
+    PORT = 3000;
+    var {ltData, ltButton} = "";
+    var updateActive = false;
+   
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     fetch(`http://localhost:${PORT}/getAll`)
+    //     .then(response => response.json())
+    //     .then(data => loadHTMLTable(data['data']));
+    // });
+    //const results_body = document.querySelector('#results');
+
+    //showAllData();
+   
+    document.addEventListener('DOMContentLoaded', function() {
+        //results_body.innerHTML = "Loading data from SQL Server..."
+        console.log("DOMContentLoaded()")
+        fetch(`http://localhost:${PORT}/getAll`)
+        .then(response => response.json())
+        //.then(data => console.log("getAllData - return (conn.query):" + results))
+        .then(data => loadHTMLTable(data['data']));
+    });
+
+    function saveDatatoDB() {
+        saveBtn.onclick = function () {
+            console.log("The Save button was pressed!");
+            fetch(`http://localhost:${PORT}/update`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-type' : 'application/json'
+                },
+                body: JSON.stringify( {
+                    // id: updateNameInput.dataset.id, // Update Name textbox (dataset.id)
+                    // name: updateNameInput.value // Update Name textbox
+                    LicenseId: txt-licid.value,
+                    LicenseKey: txt-lickey.value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+       
+                    // Can also hide the HTML and update the table
+                    // instead of just reloading the page.
+                    location.reload();
+                }
+            })
+        }
+    }
+
+    // if (event.target.tagName === 'BUTTON') {
+    //     if (button.textContent === 'Edit') {
+    //         button.textContent = 'Update'
+    //     }
+    // }
+     
+    // Dynamically Listen for an event after it is created (with table innerHTML)
+    document.querySelector('table tbody').addEventListener('click', function(event) {
+        if (event.target.className === "delete-row-btn") {
+            deleteRowById(event.target.dataset.id);
+        }
+        if (event.target.className === "edit-row-btn") {
+            console.log("You clicked the Edit button!!!")
+            handleEditRow(event.target.dataset.id);
+            ltData = "Update";
+            ltButton = "update-row-btn";
+            //document.getElementById("#edit-row-btn").style.display="none";
+            updateActive = true;
+            console.log("Dynamically accessing the Edit button")
+            checkEditButton();
+        }
+        if (event.target.className === "update-row-btn") {
+            ltData = "Edit";
+            ltButton = "edit-row-btn"
+            //handleUpdateRow(event.target.dataset.id);
+        }
+    });
+   
+    const searchBtn = document.querySelector('#search-btn');
+   
+    // ----------   SEARCH button QUERY --------------------------
+   
+    searchBtn.onclick = function () {
+        // Get value in "search by name" textbox
+        ltData = "Edit";
+        ltButton = "edit-row-btn";
+        //updateActive = true;
+        const searchValue = document.querySelector('#search-input').value;
+        //dynamicClick(); // Force the Edit button click again to run
+   
+        fetch(`http://localhost:${PORT}/search/` + searchValue)
+        .then(response => response.json())
+        .then(data => loadHTMLTable(data['data']));
+    }
+
+    function buttonDisplaySwitch() {
+        const changeEditBtn = document.getElementById("#edit-row-btn").style.display="none";
+        if (changeEditBtn) {
+            changeEditBtn.textContent = "Update";
+        } else {
+            console.error("The Edit button was not found!");
+        }
+        //document.getElementById("#edit-row-btn").style.visibility="hidden";
+    }
+
+
+
+    function dynamicClick() {
+        window.onload = function() {
+            ltData = "Update";
+            ltButton = "update-row-btn"
+            var evolveButton = document.getElementById("edit-row-btn");
+            evolveButton.click(); // this will trigger the click event
+
+        };
+    }
+
+    // Once you click "Edit" the Name(Update) area appears
+    function handleEditRow(id) {
+        const updateSection = document.querySelector('#update-row');
+        updateSection.hidden = false;
+        const updateActive = true;
+   
+        // Updates row dynamically Prev was: update-name-input
+        document.querySelector('#update-name-input').dataset.id = id;
+    }
+
+    function handleUpdateRow(id) {
+        const updateSection = document.querySelector('#update-row');
+        updateSection.hidden = false;
+   
+        // Updates row dynamically Prev was: update-name-input
+        document.querySelector('#update-name-input').dataset.id = id;
+    }
+
+
+    function showSearchRow() {
+        const searchSection = document.querySelector('#search-row');
+        searchSection.hidden = false;
+    }
+
+
+
+    const editBtn = document.querySelector('#edit-row-btn'); // Update button
+
+    function checkEditButton() {
+        if (updateActive === true) {
+        console.log("updateActive is true");
+
+        // Get value in "search by name" textbox
+        console.log("You clicked the Edit button!");
+        ltData = "Update";
+        ltButton = "update-row-btn";
+        const searchValue = document.querySelector('#search-input').value;
+        const editBtn = document.querySelector('#edit-row-btn'); // Update button
+        editBtn.innerHTML = "Hello Steve";
+
+        //dynamicClick(); // Force the Edit button click again to run
+   
+        // fetch(`http://localhost:${PORT}/search/` + searchValue)
+        // .then(response => response.json())
+        // .then(data => loadHTMLTable(data['data']));
+        }
+    }
+   
+    function deleteRowById(id) {
+        fetch(`http://localhost:${PORT}/delete/` + id, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data =>  {
+            location.reload();
+        });
+    }
+   
+    //--------- Get the SECTION area / UPDATE button ----------------
+
+    const updateBtn = document.querySelector('#update-row-btn'); // Update button
+   
+    updateBtn.onclick = function() {
+
+        // Get value from Update textbox
+        const updateNameInput = document.querySelector('#update-name-input').value;
+
+        console.log("updateBtn.onlclick: updateNameInput:" + updateNameInput)
+   
+        // NOTE: An empty object returned 'NaN' in 'where clause'
+        // It's not getting the id (instead an empty object) is because
+        // in our headers, need to set content to 'application/json'
+   
+        fetch(`http://localhost:${PORT}/update`, {
+            method: 'PATCH',
+            headers: {
+                'Content-type' : 'application/json'
+            },
+            body: JSON.stringify( {
+                // id: updateNameInput.dataset.id, // Update Name textbox (dataset.id)
+                // name: updateNameInput.value // Update Name textbox
+                LicenseId: txt-licid.value,
+                LicenseKey: txt-lickey.value
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+   
+                // Can also hide the HTML and update the table
+                // instead of just reloading the page.
+                location.reload();
+            }
+        })
+    }
+   
+    // ------- "Add Name" button / INSERT ---------
+
+    const addBtn = document.querySelector('#add-name-btn');
+   
+    // Get the "Name" textbox
+    addBtn.onclick = function () {
+        const nameInput = document.querySelector('#name-input')
+        const name = nameInput.value;
+        nameInput.value = "";
+
+        addBtn.innerHTML = "Clicked the Add Name button"
+
+        console.log("Add Name was clicked!")
+   
+        fetch(`http://localhost:${PORT}/insert`, {
+            headers: {
+                'Content-type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify( { name: name }) // gets textbox Name
+        })
+        .then(response => response.json())
+        .then(data => console.log("addBtn Promise (data):" + data))
+        .then(data => insertRowIntoTable(data['data']))
+    }
+   
+    function insertRowIntoTable(data) {
+        console.log("insertRowIntoTable():index " + data);
+        const table = document.querySelector('table tbody');
+        const isTableData = table.querySelector('.no-data');
+       
+        let tableHtml = "<tr>";
+            // Was previously edit-row-btn "Edit"
+            tableHtml += `<td><td><button class="${ltButton}" ${data.LicenseId}>${ltData}</td>`;
+   
+        // Loops through an object
+        for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+                if (key === 'Activation_Date') {
+                    data[key] = new Date(data[key]).toLocaleDateString();
+                }
+                tableHtml += `<td>${data[key]}</td>`;
+            }
+        }
+   
+        tableHtml += `<td><button class="delete-row-btn" data-id=${data.LicenseId}>Delete</td>`;
+        tableHtml += "<tr>";
+   
+        if (isTableData) {
+            table.innerHTML = tableHtml;
+        } else {
+            const newRow = table.insertRow();
+            newRow.innerHTML = tableHtml;
+        }
+    }
+
+    function loadHTMLTable(data) {
+        const table = document.querySelector('table tbody');
+   
+        // Check if data array is empty
+        if (data.length === 0) {
+            table.innerHTML = "<tr><td class='no-data' colspan='5'>No Data was found from the database.</td></tr>";
+            return;
+        }
+        let tableHtml = "";
+   
+            tableHtml += "<tr>";
+            tableHtml += "<td>";
+            tableHtml += `<th>LicenseId</th>`;
+            tableHtml += `<th>LicenseKey</th>`;
+            tableHtml += `<th>Type</th>`;
+            tableHtml += `<th>Activation_Date</th>`;
+            tableHtml += `<th>Expiration_Date</th>`;
+            tableHtml += `<th>Owning_org</th>`;
+            tableHtml += `<th>OEM</th>`;
+            tableHtml += `<th>Channel_Partner</th>`;
+            tableHtml += `<th>Number_of_devices</th>`;
+            tableHtml += `<th>Cost_per_unit</th>`;
+            tableHtml += `</tr>`;
+   
+        // Retrieve all values back from the database
+        data.forEach(function ( {LicenseId, LicenseKey, Type, Activation_Date, Expiration_Date, Owning_org, OEM, Channel_Partner, Number_of_devices_users_supported, Cost_per_unit }) {
+            //tableHtml += `<td>${new Date(Activation_Date).toLocaleDateString()}<td>`;
+            tableHtml += "<tr>";
+            tableHtml += "<thead>";
+            // Edit - Update Cancel dynamic buttons
+            // Was previously edit-row-btn "Edit"
+            tableHtml += `<td><button class="${ltButton}" onclick="buttonDisplaySwitch()">${ltData}</td>`;
+            tableHtml += `<td><button class="save-row-btn" id="save-row-btn" onclick="saveDatatoDB()">Save</td>`;
+            tableHtml += `<td contenteditable><input type="text" id="txt-licid" value="${LicenseId}"></td>`;
+            tableHtml += `<td contenteditable><input type="text" id="txt-lickey" value="${LicenseKey}"></td>`;
+            tableHtml += `<td contenteditable><input type="text" value="${Type}"></td>`;
+            tableHtml += `<td contenteditable><input type="text" value="${Activation_Date}"></td>`;
+            tableHtml += `<td contenteditable><input type="text" value="${Expiration_Date}"></td>`;
+            tableHtml += `<td contenteditable><input type="text" value="${Owning_org}"></td>`;
+            tableHtml += `<td contenteditable><input type="text" value="${OEM}"></td>`;
+            tableHtml += `<td contenteditable><input type="text" value="${Channel_Partner}"></td>`;
+            tableHtml += `<td contenteditable><input type="text" value="${Number_of_devices_users_supported}"></td>`;
+            tableHtml += `<td contenteditable><input type="text" value="${Cost_per_unit}"></td>`;
+            tableHtml += `<td contenteditable><button class="delete-row-btn" data-id=${LicenseId}>Delete</td>`;
+            tableHtml += "</thead>";
+            tableHtml += `</tr>`;
+
+            tableHtml += `</tr>`;
+            tableHtml += `<td contenteditable id="LicenseKey_data"></td>`;
+            tableHtml += `<td contenteditable id="Type"></td>`;
+            tableHtml += `<td contenteditable id="Activation_Date"></td>`;
+            tableHtml += `<td contenteditable id="Expiration_Date"></td>`;
+            tableHtml += `<td contenteditable id="Owning_org"></td>`;
+            tableHtml += `<td contenteditable id="OEM"></td>`;
+            tableHtml += `</tr>`;
+        });
+   
+        table.innerHTML = tableHtml;
+        const saveBtn = document.getElementById("#save-row-btn");
+    }
+        // const searchBtn = document.querySelector('#search-btn')
+        // const results_body = document.querySelector('#results');
+
+    /* function showAllData() {
+        //results_body.innerHTML = "Loading data from SQL Server..."
+        console.log("showAllData()")
+        fetch(`http://localhost:${PORT}/getAll`)
+        .then(response => response.json())
+        .then(data => loadHTMLTable(data['data']));
+    } */
+    </script>
+
+</body>
+</html>
