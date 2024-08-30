@@ -1,0 +1,222 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "poppins", sans-serif;
+}
+
+.wrapper-nav div {
+  display: flex;
+  position: fixed;
+  margin-left: -5px;
+  width: 150%;
+}
+
+.wrapper-nav div.main_content {
+  padding: 20px; /* bottom padding */
+  background: #fff;
+  color: #717171;
+  z-index: 3;
+}
+
+/* Main Menus: Home, About Us, Resume ... */
+
+.wrapper-nav .nav-menus {
+  position: relative;
+}
+
+.wrapper-nav .nav-menus h2 {
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  font-size: 32px;
+  color: yellow;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 20px 7%;
+}
+
+/*.nav-menus #nav-bar ul {
+    margin-bottom: 299px;
+    background=color: blue;
+} */
+
+.nav-links {
+  height: 0;
+}
+
+.nav-links li {
+  display: inline-block;
+  margin: 40px 30px;
+  list-style: none;
+}
+.nav-links li a {
+  text-decoration: none;
+  color: #fff;
+}
+
+nav .fa-bars {
+  display: none;
+}
+
+.show-links {
+  min-height: 330px;
+}
+
+/* Hamburger Menu */
+
+.nav-menus .nav-bar {
+  margin-top: 50px;
+}
+
+.nav-menus .nav-btn {
+  padding: 0.15rem 0.75rem;
+}
+
+/* Header: "Finding a Job" */
+
+.nav-menus .main-title {
+  text-align: center;
+}
+
+.nav-menus {
+  margin: 0px 0;
+  background-image: linear-gradient(to right, #1d41c1, transparent),
+    url(../images/company-office.jpg);
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  padding: 3%;
+  padding-top: 40px;
+  color: #fff;
+  margin-left: 250px;
+}
+.nav-menus h2 {
+  font-size: 2vw;
+  line-height: 5.3vw;
+  font-weight: 500;
+}
+
+.wrapper {
+  display: flex;
+}
+
+/* Mobile Button */
+
+/* Beneficial Categories for Job Seekers */
+
+.wrapper .main_content {
+  width: 100%;
+  margin-top: 280px;
+  z-index: 1;
+  padding: 20px;
+  background: #fff;
+  color: #717171;
+  border-bottom: 1px solid #e0e4e8;
+  /* padding-top: 150px; */
+}
+
+.jobcareers {
+  margin: 0px 0;
+  background-image: linear-gradient(to right, #1d41c1, transparent),
+    url(../images/company-office.jpg);
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  padding: 5%;
+  color: #fff;
+  margin-left: 240px;
+  margin-top: 300px; /* Spacing above "Beneficial Categories" */
+}
+
+.jobcareers h2 {
+  font-size: 2vw;
+  line-height: 5.3vw;
+  font-weight: 500;
+  padding-bottom: 50px;
+}
+
+/* Tips for Job Seekers in a Struggling Economy */
+
+.jobseekers {
+  margin: 80px 0;
+  background-image: linear-gradient(to right, #1d41c1, transparent),
+    url(../images/job-seekers.jpg);
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  padding: 5%;
+  color: #fff;
+  margin-left: 240px;
+}
+
+.jobseekers h2 {
+  font-size: 2vw;
+  line-height: 5.3vw;
+  font-weight: 500;
+}
+
+/* Table styles */
+.main-grid {
+  display: grid;
+  min-height: 70h;
+}
+
+/* main {
+    margin: 80px auto;
+    text-align: center;
+} */
+
+table {
+  width: 10%;
+  border-collapse: collapse;
+}
+
+tbody {
+  padding-top: 50px;
+}
+
+td {
+  margin-right: 0.5rem;
+  border-radius: 50%;
+  vertical-align: middle;
+  padding: 5px 5px;
+
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+}
+
+table,
+th,
+td {
+  border-collapse: collapse;
+  padding: 4px;
+  text-align: center;
+}
+
+button {
+  background-color: #1d41c1;
+  color: #fff;
+
+  border: none;
+  color: white;
+  padding: 10px 27px;
+  text-decoration: none;
+
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+input[type="text"] {
+  font-size: 16px;
+  height: 30px;
+  width: 20px;
+  margin: 0 auto;
+  width: 100px;
+  text-align: center;
+}
