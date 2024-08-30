@@ -7,8 +7,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Wish List Project</title>
-    <!-- <link href="https://getbootstrap.com/docs/5.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"> -->
-    <!-- <link href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css" rel="stylesheet"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/client/stylesheet.css">
 
@@ -72,31 +70,14 @@
 
 </main>
 
-<script
-  src="https://code.jquery.com/jquery-3.7.1.min.js"
-  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-  crossorigin="anonymous"></script>
 <script>
-
     PORT = 3000;
     var {ltData, ltButton} = "";
     var updateActive = false;
    
-    // document.addEventListener('DOMContentLoaded', function() {
-    //     fetch(`http://localhost:${PORT}/getAll`)
-    //     .then(response => response.json())
-    //     .then(data => loadHTMLTable(data['data']));
-    // });
-    //const results_body = document.querySelector('#results');
-
-    //showAllData();
-   
     document.addEventListener('DOMContentLoaded', function() {
-        //results_body.innerHTML = "Loading data from SQL Server..."
         console.log("DOMContentLoaded()")
         fetch(`http://localhost:${PORT}/getAll`)
-        .then(response => response.json())
-        //.then(data => console.log("getAllData - return (conn.query):" + results))
         .then(data => loadHTMLTable(data['data']));
     });
 
@@ -109,8 +90,6 @@
                     'Content-type' : 'application/json'
                 },
                 body: JSON.stringify( {
-                    // id: updateNameInput.dataset.id, // Update Name textbox (dataset.id)
-                    // name: updateNameInput.value // Update Name textbox
                     LicenseId: txt-licid.value,
                     LicenseKey: txt-lickey.value
                 })
@@ -126,12 +105,6 @@
             })
         }
     }
-
-    // if (event.target.tagName === 'BUTTON') {
-    //     if (button.textContent === 'Edit') {
-    //         button.textContent = 'Update'
-    //     }
-    // }
      
     // Dynamically Listen for an event after it is created (with table innerHTML)
     document.querySelector('table tbody').addEventListener('click', function(event) {
@@ -183,7 +156,6 @@
     }
 
 
-
     function dynamicClick() {
         window.onload = function() {
             ltData = "Update";
@@ -218,8 +190,6 @@
         searchSection.hidden = false;
     }
 
-
-
     const editBtn = document.querySelector('#edit-row-btn'); // Update button
 
     function checkEditButton() {
@@ -233,12 +203,6 @@
         const searchValue = document.querySelector('#search-input').value;
         const editBtn = document.querySelector('#edit-row-btn'); // Update button
         editBtn.innerHTML = "Hello Steve";
-
-        //dynamicClick(); // Force the Edit button click again to run
-   
-        // fetch(`http://localhost:${PORT}/search/` + searchValue)
-        // .then(response => response.json())
-        // .then(data => loadHTMLTable(data['data']));
         }
     }
    
@@ -355,7 +319,6 @@
             return;
         }
         let tableHtml = "";
-   
             tableHtml += "<tr>";
             tableHtml += "<td>";
             tableHtml += `<th>LicenseId</th>`;
@@ -406,16 +369,6 @@
         table.innerHTML = tableHtml;
         const saveBtn = document.getElementById("#save-row-btn");
     }
-        // const searchBtn = document.querySelector('#search-btn')
-        // const results_body = document.querySelector('#results');
-
-    /* function showAllData() {
-        //results_body.innerHTML = "Loading data from SQL Server..."
-        console.log("showAllData()")
-        fetch(`http://localhost:${PORT}/getAll`)
-        .then(response => response.json())
-        .then(data => loadHTMLTable(data['data']));
-    } */
     </script>
 
 </body>
